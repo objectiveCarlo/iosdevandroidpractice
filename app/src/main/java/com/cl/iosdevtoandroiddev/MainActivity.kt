@@ -1,6 +1,7 @@
 package com.cl.iosdevtoandroiddev
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -9,10 +10,14 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import com.cl.iosdevtoandroiddev.article.ArticleViewModel
 import com.cl.iosdevtoandroiddev.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: ArticleViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
@@ -32,6 +37,18 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
+        }
+
+        viewModel = ViewModelProvider(this)[ArticleViewModel::class.java]
+
+        viewModel.articles.observe(this) { articles ->
+            articles.forEach {
+                Log.d("Article", "${it.title} - ${it.published_at}")
+            }
+        }
+
+        viewModel.error.observe(this) { error ->
+            Toast.makeText(this, "Error: $error", Toast.LENGTH_SHORT).show()
         }
     }
 
